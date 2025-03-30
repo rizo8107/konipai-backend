@@ -75,8 +75,20 @@ RUN echo "PORT=$PORT" > .env \
 # Copy all source files
 COPY . .
 
-# Build the server
-RUN npm run build
+# Make the fallback build script executable
+RUN chmod +x scripts/fallback-build.sh
+
+# Debug - list files and scripts
+RUN echo "Listing package.json scripts:" && \
+    cat package.json | grep -A 10 '"scripts"' && \
+    echo "NODE_ENV: $NODE_ENV" && \
+    echo "Listing project files:" && \
+    ls -la && \
+    echo "Listing scripts directory:" && \
+    ls -la scripts/
+
+# Build the server with explicit shell to avoid command not found errors
+RUN /bin/sh -c "npm run build || npm run build:fallback"
 
 # Production stage
 FROM node:20-alpine AS runner

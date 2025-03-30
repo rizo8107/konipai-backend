@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx src/server/index.ts",
-    "build": "node scripts/build-backend.js",
+    "build": "node scripts/build-backend.js || ./scripts/fallback-build.sh",
+    "build:fallback": "./scripts/fallback-build.sh",
     "start": "node dist-server/server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
