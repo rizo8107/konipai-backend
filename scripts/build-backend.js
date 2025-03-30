@@ -17,6 +17,14 @@ const destServerDir = path.join(destDir, 'server');
 const serverConfigSrc = path.join(rootDir, 'server.config.ts');
 const serverConfigDest = path.join(rootDir, 'dist-server', 'server.config.js');
 
+// Print environment for debugging
+console.log('Build environment:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('API_URL:', process.env.API_URL);
+console.log('EMAIL_API_URL:', process.env.EMAIL_API_URL);
+console.log('WHATSAPP_API_URL:', process.env.WHATSAPP_API_URL);
+console.log('POCKETBASE_URL:', process.env.POCKETBASE_URL);
+
 // Create destination directories if they don't exist
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) {
@@ -66,19 +74,40 @@ if (!fs.existsSync(indexJsPath)) {
  * Minimal server implementation
  */
 import express from 'express';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({ 
+    status: 'ok',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Server is running!' });
+  res.json({ 
+    message: 'Server is running!',
+    environment: process.env.NODE_ENV,
+    port: PORT,
+    apiUrl: process.env.API_URL,
+    emailApiUrl: process.env.EMAIL_API_URL,
+    whatsappApiUrl: process.env.WHATSAPP_API_URL,
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.listen(PORT, () => {
   console.log(\`Server running on port \${PORT}\`);
+  console.log('Environment:', process.env.NODE_ENV);
+  console.log('API URL:', process.env.API_URL);
+  console.log('Email API URL:', process.env.EMAIL_API_URL);
+  console.log('WhatsApp API URL:', process.env.WHATSAPP_API_URL);
 });
 `;
   try {
